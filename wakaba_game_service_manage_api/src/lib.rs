@@ -1,8 +1,7 @@
-use axum::extract::{FromRef, State};
+use axum::middleware;
 use axum::response::Html;
 use axum::routing::{get, post};
 use axum::Router;
-use axum::{async_trait, middleware};
 use std::sync::Arc;
 pub use systemd::SystemdControl;
 
@@ -49,7 +48,7 @@ async fn handler() -> Html<&'static str> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use axum::async_trait;
+
     use axum::body::Body;
     use axum::http::{Request, StatusCode};
     use http_body_util::BodyExt;

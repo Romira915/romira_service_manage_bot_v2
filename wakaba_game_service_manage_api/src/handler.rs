@@ -6,8 +6,8 @@ use axum::Json;
 use schema::sdtd::SdtdRequestJson;
 
 pub(super) async fn sdtd_handler(
-    State(state): State<AppState>,
-    Json(data): Json<SdtdRequestJson>,
+    State(_state): State<AppState>,
+    Json(_data): Json<SdtdRequestJson>,
 ) -> impl IntoResponse {
     StatusCode::OK
 }
