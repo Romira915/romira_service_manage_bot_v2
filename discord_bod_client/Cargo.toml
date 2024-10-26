@@ -1,0 +1,9 @@
+[package]
+name = "discord_bod_client"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+env_logger = "0.11.5"
+poise = "0.6.1"
+tokio = { workspace = true }
