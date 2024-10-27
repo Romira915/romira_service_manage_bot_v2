@@ -27,7 +27,7 @@ pub struct AppState {
 impl Default for AppState {
     fn default() -> Self {
         Self {
-            sdtd_control: Arc::new(systemd::Systemd::new("sdtd.service")),
+            sdtd_control: Arc::new(systemd::Systemd::new("sdtdserver.service")),
         }
     }
 }
