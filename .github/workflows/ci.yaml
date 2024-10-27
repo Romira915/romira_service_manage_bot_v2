@@ -25,6 +25,9 @@ jobs:
             ./**/target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
+      - name: Setup .env
+        run: cp .env.example .env
+
       - name: cargo fmt
         run: cargo fmt --all -- --check
 
