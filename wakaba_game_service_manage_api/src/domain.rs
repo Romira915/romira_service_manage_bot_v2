@@ -1,7 +1,7 @@
 use crate::SystemdControl;
 use schema::SystemdCommand;
 
-pub(crate) async  fn sdtd_systemd_executable(
+pub(crate) async fn sdtd_systemd_executable(
     sdtd_systemd: impl SystemdControl,
     command: SystemdCommand,
 ) -> anyhow::Result<bool> {
