@@ -113,6 +113,7 @@ jobs:
               "curl -L -o /tmp/wakaba_game_service_manage_api.tar.gz \"https://github.com/${{ github.repository }}/releases/download/${{ needs.create-release-tag.outputs.release_tag }}/wakaba_game_service_manage_api.tar.gz\" && \
               tar -xzvf /tmp/wakaba_game_service_manage_api.tar.gz -C /tmp && \
               sudo rsync -a --delete /tmp/wakaba_game_service_manage_api/ /usr/local/wakaba_game_service_manage_api/bin/ && \
+              sudo chmod 755 /usr/local/wakaba_game_service_manage_api/bin/wakaba_game_service_manage_api && \
               sudo systemctl restart wakaba_game_service_manage_api.service"
             ]}' \
             --region $AWS_REGION
