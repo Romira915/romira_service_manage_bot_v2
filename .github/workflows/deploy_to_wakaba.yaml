@@ -108,9 +108,9 @@ jobs:
           aws ssm send-command --instance-ids ${{ env.INSTANCE_ID }} \
             --document-name "AWS-RunShellScript" \
             --parameters '{"commands":[
-              "curl -L -o /tmp/wakaba_game_service_manage_api.tar.gz \"https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG_NAME}/wakaba_game_service_manage_api.tar.gz\"",
+              "curl -L -o /tmp/wakaba_game_service_manage_api.tar.gz \"https://github.com/${{ github.repository }}/releases/download/${{ env.tag_name }}/wakaba_game_service_manage_api.tar.gz\"",
               "tar -xzvf /tmp/wakaba_game_service_manage_api.tar.gz -C /tmp",
-              "sudo cp /tmp/wakaba_game_service_manage_api/wakaba_game_service_manage_api /usr/local/wakaba_game_service_manage_api/bin/",
+              "sudo rsync -a --delete /tmp/wakaba_game_service_manage_api/ /usr/local/wakaba_game_service_manage_api/bin/",
               "sudo systemctl restart wakaba_game_service_manage_api.service"
             ]}' \
             --region $AWS_REGION
