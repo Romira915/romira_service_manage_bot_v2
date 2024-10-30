@@ -38,6 +38,8 @@ jobs:
   create-release-tag:
     runs-on: ubuntu-latest
     needs: build
+    outputs:
+      release_tag: ${{ steps.tag_version.outputs.new_tag }}
 
     steps:
       - uses: actions/checkout@v4
@@ -79,6 +81,9 @@ jobs:
           asset_name: wakaba_game_service_manage_api.tar.gz
           asset_content_type: application/gzip
 
+      - name: Set tag output
+        run: echo "tag_name=${{ steps.tag_version.outputs.new_tag }}" >> $GITHUB_ENV
+
   deploy-to-wakaba:
     runs-on: ubuntu-latest
     needs: create-release-tag
@@ -94,9 +99,29 @@ jobs:
       DESTINATION_FILE_PATH: /home/romira/Cargo.toml
 
     steps:
-      - uses: actions/checkout@v4
-
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ${{ env.AWS_REGION }}
           role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
+
+
+      - name: deploy to wakaba
+        run: |
+          COMMAND_ID=$(aws ssm send-command --instance-ids ${{ env.INSTANCE_ID }} \
+            --document-name "AWS-RunShellScript" \
+            --parameters '{"commands":[
+              "curl -L -o /tmp/wakaba_game_service_manage_api.tar.gz \"https://github.com/${{ github.repository }}/releases/download/${{ needs.create-release-tag.outputs.release_tag }}/wakaba_game_service_manage_api.tar.gz\" &&
+              tar -xzvf /tmp/wakaba_game_service_manage_api.tar.gz -C /tmp &&
+              sudo rsync -a --delete /tmp/wakaba_game_service_manage_api/ /usr/local/wakaba_game_service_manage_api/bin/ &&
+              sudo chmod 755 /usr/local/wakaba_game_service_manage_api/bin/wakaba_game_service_manage_api &&
+              sudo systemctl restart wakaba_game_service_manage_api.service"
+            ]}' \
+            --region $AWS_REGION \
+            --query "Command.CommandId" \
+            --output text)
+          
+          sleep 5  # コマンドが実行されるまで待つ
+          aws ssm list-command-invocations --command-id "$COMMAND_ID" --details
+          
+          INVOCATIONS=$(aws ssm list-command-invocations --command-id "$COMMAND_ID" --details)
+          
