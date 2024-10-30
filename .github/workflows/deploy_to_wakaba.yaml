@@ -26,6 +26,7 @@ jobs:
             ~/.cargo/git/db/
             ./**/target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          save-always: true
 
       - name: Build wakaba_game_service_manage_api
         run: cargo build --release -p wakaba_game_service_manage_api --target x86_64-unknown-linux-gnu
