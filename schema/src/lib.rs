@@ -10,3 +10,10 @@ pub enum SystemdCommand {
     #[default]
     IsActive,
 }
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+pub enum SystemdStatus {
+    Active,
+    #[default]
+    Inactive,
+}

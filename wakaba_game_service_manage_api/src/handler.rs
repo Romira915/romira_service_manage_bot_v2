@@ -1,31 +1,59 @@
 use crate::AppState;
 use axum::extract::State;
-use axum::http::StatusCode;
-use axum::response::IntoResponse;
+use axum::http::header::CONTENT_TYPE;
+use axum::http::{HeaderMap, StatusCode};
+use axum::response::{IntoResponse, Response};
 use axum::Json;
-use schema::sdtd::SdtdRequestJson;
+use schema::sdtd::{SdtdRequestJson, SdtdResponseJson};
+
+struct SdtdError(anyhow::Error);
+
+impl IntoResponse for SdtdError {
+    fn into_response(self) -> Response {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(SdtdResponseJson::from_result(&format!("error: {}", self.0))),
+        )
+            .into_response()
+    }
+}
+
+impl<E> From<E> for SdtdError
+where
+    E: Into<anyhow::Error>,
+{
+    fn from(e: E) -> Self {
+        Self(e.into())
+    }
+}
 
 pub(super) async fn sdtd_handler(
     State(state): State<AppState>,
     Json(data): Json<SdtdRequestJson>,
-) -> impl IntoResponse {
-    match data.command {
+) -> Result<impl IntoResponse, SdtdError> {
+    let response = match data.command {
         schema::SystemdCommand::Start => {
-            state.sdtd_control.start().await.unwrap();
+            state.sdtd_systemd.start().await?;
+            SdtdResponseJson::from_result("success")
         }
         schema::SystemdCommand::Stop => {
-            state.sdtd_control.stop().await.unwrap();
+            state.sdtd_systemd.stop().await?;
+            SdtdResponseJson::from_result("success")
         }
         schema::SystemdCommand::Restart => {
-            state.sdtd_control.restart().await.unwrap();
+            state.sdtd_systemd.restart().await?;
+            SdtdResponseJson::from_result("success")
         }
         schema::SystemdCommand::IsActive => {
-            let is_active = state.sdtd_control.is_active().await.unwrap();
-            if !is_active {
-                return StatusCode::SERVICE_UNAVAILABLE;
+            let is_active = state.sdtd_systemd.is_active().await?;
+
+            if is_active {
+                SdtdResponseJson::new("success", schema::SystemdStatus::Active)
+            } else {
+                SdtdResponseJson::new("success", schema::SystemdStatus::Inactive)
             }
         }
-    }
+    };
 
-    StatusCode::OK
+    Ok(Json(response))
 }

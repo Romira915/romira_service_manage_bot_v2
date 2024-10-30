@@ -7,6 +7,7 @@ pub use systemd::SystemdControl;
 
 pub mod config;
 mod custom_middleware;
+pub(crate) mod domain;
 mod handler;
 mod systemd;
 
@@ -21,20 +22,22 @@ pub fn app(app_state: AppState) -> Router {
 
 #[derive(Clone)]
 pub struct AppState {
-    sdtd_control: Arc<dyn SystemdControl>,
+    sdtd_systemd: Arc<dyn SystemdControl>,
 }
 
 impl Default for AppState {
     fn default() -> Self {
         Self {
-            sdtd_control: Arc::new(systemd::Systemd::new("sdtdserver.service")),
+            sdtd_systemd: Arc::new(systemd::Systemd::new("sdtdserver.service")),
         }
     }
 }
 
 impl AppState {
     pub fn new(sdtd_control: Arc<dyn SystemdControl>) -> Self {
-        Self { sdtd_control }
+        Self {
+            sdtd_systemd: sdtd_control,
+        }
     }
 }
 
