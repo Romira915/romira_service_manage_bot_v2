@@ -12,6 +12,13 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      CACHE_PATH: |
+        ~/.cargo/bin/
+        ~/.cargo/registry/index/
+        ~/.cargo/registry/cache/
+        ~/.cargo/git/db/
+        ./**/target
     steps:
       - uses: actions/checkout@v4
 
@@ -19,17 +26,17 @@ jobs:
         id: cache-cargo
         uses: actions/cache@v4
         with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            ./**/target
+          path: ${{ env.CACHE_PATH }}
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          save-always: true
 
       - name: Build wakaba_game_service_manage_api
         run: cargo build --release -p wakaba_game_service_manage_api --target x86_64-unknown-linux-gnu
+
+      - uses: actions/cache/save@v3
+        id: cache-save-cargo
+        with:
+          path: ${{ env.CACHE_PATH }}
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - uses: actions/upload-artifact@v4
         with:
