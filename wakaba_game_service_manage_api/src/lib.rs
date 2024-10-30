@@ -1,3 +1,4 @@
+use axum::extract::FromRef;
 use axum::middleware;
 use axum::response::Html;
 use axum::routing::{get, post};
@@ -20,9 +21,9 @@ pub fn app(app_state: AppState) -> Router {
     Router::new().route("/", get(handler)).nest("/api", api)
 }
 
-#[derive(Clone)]
+#[derive(FromRef, Clone)]
 pub struct AppState {
-    sdtd_systemd: Arc<dyn SystemdControl>,
+    pub sdtd_systemd: Arc<dyn SystemdControl>,
 }
 
 impl Default for AppState {

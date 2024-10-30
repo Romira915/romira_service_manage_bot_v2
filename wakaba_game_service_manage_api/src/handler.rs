@@ -1,12 +1,12 @@
-use crate::AppState;
+use crate::SystemdControl;
 use axum::extract::State;
-use axum::http::header::CONTENT_TYPE;
-use axum::http::{HeaderMap, StatusCode};
+use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
 use schema::sdtd::{SdtdRequestJson, SdtdResponseJson};
+use std::sync::Arc;
 
-struct SdtdError(anyhow::Error);
+pub(super) struct SdtdError(anyhow::Error);
 
 impl IntoResponse for SdtdError {
     fn into_response(self) -> Response {
@@ -28,24 +28,24 @@ where
 }
 
 pub(super) async fn sdtd_handler(
-    State(state): State<AppState>,
+    State(sdtd_systemd): State<Arc<dyn SystemdControl>>,
     Json(data): Json<SdtdRequestJson>,
 ) -> Result<impl IntoResponse, SdtdError> {
     let response = match data.command {
         schema::SystemdCommand::Start => {
-            state.sdtd_systemd.start().await?;
+            sdtd_systemd.start().await?;
             SdtdResponseJson::from_result("success")
         }
         schema::SystemdCommand::Stop => {
-            state.sdtd_systemd.stop().await?;
+            sdtd_systemd.stop().await?;
             SdtdResponseJson::from_result("success")
         }
         schema::SystemdCommand::Restart => {
-            state.sdtd_systemd.restart().await?;
+            sdtd_systemd.restart().await?;
             SdtdResponseJson::from_result("success")
         }
         schema::SystemdCommand::IsActive => {
-            let is_active = state.sdtd_systemd.is_active().await?;
+            let is_active = sdtd_systemd.is_active().await?;
 
             if is_active {
                 SdtdResponseJson::new("success", schema::SystemdStatus::Active)

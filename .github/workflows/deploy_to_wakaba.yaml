@@ -1,10 +1,14 @@
-name: CI
+name: Deploy to wakaba
 
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+  
 jobs:
   deploy_to_wakaba:
     runs-on: ubuntu-latest
