@@ -116,7 +116,7 @@ jobs:
               sudo chmod 755 /usr/local/wakaba_game_service_manage_api/bin/wakaba_game_service_manage_api && \
               sudo systemctl restart wakaba_game_service_manage_api.service"
             ]}' \
-            --region $AWS_REGION
+            --region $AWS_REGION \
             --query "Command.CommandId" \
             --output text)
           
