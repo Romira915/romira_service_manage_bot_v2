@@ -33,8 +33,8 @@ jobs:
 
       - name: Setup .env.wakaba_game_service_manage_api.discord_bot_client
         run: |
-          cp wakaba_game_service_manage_api/.env.example wakaba_game_service_manage_api/.env
-          cp discord_bot_client/.env.example discord_bot_client/.env
+          cp .env.wakaba_game_service_manage_api.example .env.wakaba_game_service_manage_api
+          cp .env.discord_bot_client.example .env.discord_bot_client
 
       - name: cargo ci
         uses: ./.github/actions/cargo_ci
