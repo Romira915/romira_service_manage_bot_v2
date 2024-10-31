@@ -19,15 +19,12 @@ async fn main() {
     let intents =
         serenity::GatewayIntents::non_privileged() | serenity::GatewayIntents::MESSAGE_CONTENT;
 
-
     let client = serenity::ClientBuilder::new(&CONFIG.discord_token, intents)
         .framework(framework)
         .await;
 
     client.unwrap().start().await.unwrap()
 }
-
-
 
 // FrameworkOptions contains all of poise's configuration option in one struct
 // Every option can be omitted to use its default value

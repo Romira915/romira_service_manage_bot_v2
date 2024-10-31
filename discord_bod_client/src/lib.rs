@@ -16,7 +16,11 @@ pub struct Data;
 
 pub fn poise_framework_options() -> poise::FrameworkOptions<Data, Error> {
     poise::FrameworkOptions {
-        commands: vec![commands::help(), commands::register(), commands::sdtd::sdtd()],
+        commands: vec![
+            commands::help(),
+            commands::register(),
+            commands::sdtd::sdtd(),
+        ],
         prefix_options: poise::PrefixFrameworkOptions {
             prefix: Some("~".into()),
             edit_tracker: Some(Arc::new(poise::EditTracker::for_timespan(

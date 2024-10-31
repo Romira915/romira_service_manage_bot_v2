@@ -19,6 +19,9 @@ pub(crate) async fn request_sdtd_start() -> anyhow::Result<()> {
     if response.status().is_success() {
         Ok(())
     } else {
-        Err(anyhow::anyhow!("Failed to start 7 Days to Die server {}", response.text().await?))
+        Err(anyhow::anyhow!(
+            "Failed to start 7 Days to Die server {}",
+            response.text().await?
+        ))
     }
 }

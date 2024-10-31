@@ -1,5 +1,5 @@
-use crate::{repository, Context, Error};
 use crate::repository::sdtd::request_sdtd_start;
+use crate::{Context, Error};
 
 /// Control 7 Days to Die server
 #[poise::command(prefix_command, track_edits, slash_command)]

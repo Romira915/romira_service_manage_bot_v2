@@ -14,6 +14,9 @@ pub(super) async fn require_auth(
         Some(value) if value == &format!("Bearer {}", CONFIG.bearer_token) => {
             Ok(next.run(request).await)
         }
-        _ => Err((StatusCode::UNAUTHORIZED, "Unauthorized: missing or invalid Authorization header")),
+        _ => Err((
+            StatusCode::UNAUTHORIZED,
+            "Unauthorized: missing or invalid Authorization header",
+        )),
     }
 }
