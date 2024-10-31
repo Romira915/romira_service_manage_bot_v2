@@ -15,7 +15,7 @@ dotenv = { workspace = true }
 envy = { workspace = true }
 tracing = { workspace = true }
 tracing-subscriber = { workspace = true }
-easy_init_newrelic_opentelemetry = { version = "0.2.0" }
+easy_init_newrelic_opentelemetry = { workspace = true }
 log = "0.4.22"
 anyhow = { workspace = true }
 listenfd = "1.0.1"

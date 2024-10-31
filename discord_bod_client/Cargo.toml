@@ -7,3 +7,11 @@ edition = "2021"
 env_logger = "0.11.5"
 poise = "0.6.1"
 tokio = { workspace = true }
+schema = { path = "../schema" }
+envy = { workspace = true }
+dotenv = { workspace = true }
+serde = { workspace = true }
+easy_init_newrelic_opentelemetry = { workspace = true }
+tracing = { workspace = true }
+reqwest = { version = "0.12.9", features = ["json"] }
+anyhow = { workspace = true }

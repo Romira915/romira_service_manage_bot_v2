@@ -1,3 +1,4 @@
 /target
-.env
+/.env.wakaba_game_service_manage_api
 .idea
+/.env.discord_bot_client

@@ -10,3 +10,4 @@ tracing-subscriber = { version = "0.3.18", features = ["env-filter", "fmt", "std
 tokio = { version = "1.41.0", features = ["macros", "rt-multi-thread", "process"] }
 envy = "0.4.2"
 dotenv = "0.15.0"
+easy_init_newrelic_opentelemetry = { version = "0.2.0" }
