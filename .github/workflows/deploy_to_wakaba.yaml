@@ -35,7 +35,7 @@ jobs:
           path: ${{ env.CACHE_PATH }}
           key: ${{ runner.os }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
           restore-keys: |
-            {{ runner.os }}-cargo-
+            ${{ runner.os }}-cargo-
 
       - name: Build wakaba_game_service_manage_api
         run: cargo build --release -p wakaba_game_service_manage_api --target x86_64-unknown-linux-gnu
