@@ -1,0 +1,15 @@
+runs:
+  using: composite
+  steps:
+    - name: cargo fmt
+      run: cargo fmt --all -- --check
+      shell: bash
+
+    - name: cargo clippy
+      #        run: cargo clippy --all-targets --all-features -- -D warnings
+      run: cargo clippy --all-targets --all-features
+      shell: bash
+
+    - name: cargo test
+      run: cargo test --all-targets --all-features
+      shell: bash

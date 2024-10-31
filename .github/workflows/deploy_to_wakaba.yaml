@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  ci-and-build:
     runs-on: ubuntu-latest
     env:
       CACHE_PATH: |
@@ -28,7 +28,14 @@ jobs:
           path: ${{ env.CACHE_PATH }}
           key: ${{ runner.os }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
           restore-keys: |
+            ${{ runner.os }}-cargo-build-
             ${{ runner.os }}-cargo-
+
+      - name: Setup .env
+        run: cp .env.example .env
+
+      - name: cargo ci
+        uses: ./.github/actions/cargo_ci
 
       - name: Build wakaba_game_service_manage_api
         run: cargo build --release -p wakaba_game_service_manage_api --target x86_64-unknown-linux-gnu
@@ -46,7 +53,7 @@ jobs:
 
   create-release-tag:
     runs-on: ubuntu-latest
-    needs: build
+    needs: ci-and-build
     outputs:
       release_tag: ${{ steps.tag_version.outputs.new_tag }}
 
