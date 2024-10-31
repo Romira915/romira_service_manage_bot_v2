@@ -22,13 +22,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cache Cargo
-        id: cache-cargo
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.CACHE_PATH }}
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-
       - uses: actions/cache/restore@v3
         id: cache-restore-cargo
         with:
