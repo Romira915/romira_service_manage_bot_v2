@@ -110,7 +110,7 @@ jobs:
     env:
       AWS_REGION: ap-northeast-1
       AWS_ROLE_TO_ASSUME: arn:aws:iam::616657986447:role/romira_service_manage_bot_v2_github_actions_deploy_role
-      INSTANCE_ID: mi-0853a7fab289ebfad
+      INSTANCE_ID: mi-0f5dbaf1823ba7030
       SOURCE_FILE_PATH: Cargo.toml
       DESTINATION_FILE_PATH: /home/romira/Cargo.toml
 
