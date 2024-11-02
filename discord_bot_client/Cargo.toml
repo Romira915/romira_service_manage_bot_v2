@@ -1,5 +1,5 @@
 [package]
-name = "discord_bod_client"
+name = "discord_bot_client"
 version = "0.1.0"
 edition = "2021"
 
