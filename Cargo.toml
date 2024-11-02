@@ -1,5 +1,5 @@
 [workspace]
-members = ["discord_bod_client", "schema", "wakaba_game_service_manage_api"]
+members = ["discord_bot_client", "schema", "wakaba_game_service_manage_api"]
 
 [workspace.dependencies]
 anyhow = { version = "1.0.90", features = ["backtrace", "std"] }

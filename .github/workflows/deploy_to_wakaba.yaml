@@ -10,7 +10,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  ci-and-build:
+  ci:
+    uses: ./.github/workflows/ci.yaml
+  build:
     runs-on: ubuntu-latest
     env:
       CACHE_PATH: |
@@ -31,14 +33,6 @@ jobs:
             ${{ runner.os }}-cargo-build-
             ${{ runner.os }}-cargo-
 
-      - name: Setup .env.wakaba_game_service_manage_api.discord_bot_client
-        run: |
-          cp .env.wakaba_game_service_manage_api.example .env.wakaba_game_service_manage_api
-          cp .env.discord_bot_client.example .env.discord_bot_client
-
-      - name: cargo ci
-        uses: ./.github/actions/cargo_ci
-
       - name: Build wakaba_game_service_manage_api
         run: cargo build --release -p wakaba_game_service_manage_api --target x86_64-unknown-linux-gnu
 
@@ -55,7 +49,7 @@ jobs:
 
   create-release-tag:
     runs-on: ubuntu-latest
-    needs: ci-and-build
+    needs: build
     outputs:
       release_tag: ${{ steps.tag_version.outputs.new_tag }}
 
