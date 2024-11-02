@@ -1,7 +1,7 @@
 #![warn(clippy::str_to_string)]
 
-use discord_bod_client::config::CONFIG;
-use discord_bod_client::{poise_framework_options, setup_framework};
+use discord_bot_client::config::CONFIG;
+use discord_bot_client::{poise_framework_options, setup_framework};
 use poise::serenity_prelude as serenity;
 
 #[tokio::main]
