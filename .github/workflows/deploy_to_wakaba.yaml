@@ -2,12 +2,15 @@ name: Deploy to wakaba
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  ARTIFACT_NAME: wakaba_game_service_manage_api
 
 jobs:
   ci:
@@ -45,7 +48,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: wakaba_game_service_manage_api
+          name: ${{ env.ARTIFACT_NAME }}
           path: target/x86_64-unknown-linux-gnu/release/wakaba_game_service_manage_api
 
   create-release-tag:
@@ -59,11 +62,11 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: wakaba_game_service_manage_api
-          path: /tmp/wakaba_game_service_manage_api/
+          name: ${{ env.ARTIFACT_NAME }}
+          path: /tmp/${{ env.ARTIFACT_NAME }}/
 
       - name: Package Artifact
-        run: tar -czvf /tmp/wakaba_game_service_manage_api.tar.gz -C /tmp wakaba_game_service_manage_api
+        run: tar -czvf /tmp/wakaba_game_service_manage_api.tar.gz -C /tmp ${{ env.ARTIFACT_NAME }}
 
       - name: Bump version and push tag
         uses: mathieudutour/github-tag-action@v6.2
@@ -108,8 +111,8 @@ jobs:
       AWS_REGION: ap-northeast-1
       AWS_ROLE_TO_ASSUME: arn:aws:iam::616657986447:role/romira_service_manage_bot_v2_github_actions_deploy_role
       INSTANCE_ID: mi-0f5dbaf1823ba7030
-      SOURCE_FILE_PATH: Cargo.toml
-      DESTINATION_FILE_PATH: /home/romira/Cargo.toml
+      SOURCE_FILE_PATH: /tmp/wakaba_game_service_manage_api/
+      DESTINATION_FILE_PATH: /usr/local/wakaba_game_service_manage_api/bin/
 
     steps:
       - uses: aws-actions/configure-aws-credentials@v4
@@ -117,27 +120,25 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
 
-
       - name: deploy to wakaba
         run: |
           COMMANDS="
             curl -L -o /tmp/wakaba_game_service_manage_api.tar.gz 'https://github.com/${{ github.repository }}/releases/download/${{ needs.create-release-tag.outputs.release_tag }}/wakaba_game_service_manage_api.tar.gz' &&
             tar -xzvf /tmp/wakaba_game_service_manage_api.tar.gz -C /tmp &&
-            sudo rsync -a --delete /tmp/wakaba_game_service_manage_api/ /usr/local/wakaba_game_service_manage_api/bin/ &&
-            sudo chmod 755 /usr/local/wakaba_game_service_manage_api/bin/wakaba_game_service_manage_api &&
+            sudo rsync -a --delete ${{ env.SOURCE_FILE_PATH }} ${{ env.DESTINATION_FILE_PATH }} &&
+            sudo chmod 755 /usr/local/wakaba_game_service_manage_api/bin/${{ env.ARTIFACT_NAME }} &&
             sudo systemctl restart wakaba_game_service_manage_api.service
           "
           COMMANDS=$(echo $COMMANDS | tr '\n' ' ')
-          
+
           COMMAND_ID=$(aws ssm send-command --instance-ids ${{ env.INSTANCE_ID }} \
             --document-name "AWS-RunShellScript" \
             --parameters "{\"commands\":[\"$COMMANDS\"]}" \
             --region $AWS_REGION \
             --query "Command.CommandId" \
             --output text)
-          
+
           sleep 5  # コマンドが実行されるまで待つ
           aws ssm list-command-invocations --command-id "$COMMAND_ID" --details
-          
+
           INVOCATIONS=$(aws ssm list-command-invocations --command-id "$COMMAND_ID" --details)
-          
