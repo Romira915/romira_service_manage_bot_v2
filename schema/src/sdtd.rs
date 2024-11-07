@@ -6,23 +6,23 @@ pub struct SdtdRequestJson {
     pub command: SystemdCommand,
 }
 
-#[derive(Debug, Default, Serialize, Deserialize)]
-pub struct SdtdResponseJson<'a> {
-    pub result: &'a str,
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+pub struct SdtdResponseJson {
+    pub result: String,
     pub status: Option<SystemdStatus>,
 }
 
-impl<'a> SdtdResponseJson<'a> {
-    pub fn new(result: &'a str, status: SystemdStatus) -> Self {
+impl SdtdResponseJson {
+    pub fn new(result: impl ToString, status: SystemdStatus) -> Self {
         Self {
-            result,
+            result: result.to_string(),
             status: Some(status),
         }
     }
 
-    pub fn from_result(result: &'a str) -> Self {
+    pub fn from_result(result: impl ToString) -> Self {
         Self {
-            result,
+            result: result.to_string(),
             ..Default::default()
         }
     }

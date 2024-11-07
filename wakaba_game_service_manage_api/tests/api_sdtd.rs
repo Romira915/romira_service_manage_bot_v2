@@ -101,11 +101,7 @@ mod tests {
         let body = String::from_utf8_lossy(&body[..]);
         assert_eq!(
             body,
-            serde_json::to_string(&SdtdResponseJson {
-                result: "success",
-                status: None
-            })
-            .unwrap()
+            serde_json::to_string(&SdtdResponseJson::from_result("success")).unwrap()
         );
     }
 
@@ -140,11 +136,8 @@ mod tests {
         let body = String::from_utf8_lossy(&body[..]);
         assert_eq!(
             body,
-            serde_json::to_string(&SdtdResponseJson {
-                result: "success",
-                status: Some(SystemdStatus::Active)
-            })
-            .unwrap()
+            serde_json::to_string(&SdtdResponseJson::new("success", SystemdStatus::Active))
+                .unwrap()
         );
     }
 }
