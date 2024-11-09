@@ -125,6 +125,8 @@ jobs:
 
 
       - name: deploy to wakaba
+        env:
+          RETRY_LIMIT: 5
         run: |
           COMMANDS="
             curl -L -o /tmp/discord_bot_client.tar.gz 'https://github.com/${{ github.repository }}/releases/download/${{ needs.create-release-tag.outputs.release_tag }}/discord_bot_client.tar.gz' &&
@@ -142,8 +144,27 @@ jobs:
             --query "Command.CommandId" \
             --output text)
           
-          sleep 5  # コマンドが実行されるまで待つ
-          aws ssm list-command-invocations --command-id "$COMMAND_ID" --details
-          
-          INVOCATIONS=$(aws ssm list-command-invocations --command-id "$COMMAND_ID" --details)
-          
+          while true; do
+            # コマンドのステータスを取得し、失敗や成功、進行中の状態を確認
+            STATUS=$(aws ssm list-command-invocations --command-id "$COMMAND_ID" --query "CommandInvocations[0].Status" --output text)
+
+            if [ "$STATUS" = "Success" ]; then
+              echo "Success to deploy to wakaba"
+              break
+            elif [ "$STATUS" = "Failed" ]; then
+              echo "Failed to deploy to wakaba"
+              aws ssm list-command-invocations --command-id "$COMMAND_ID" --details
+              exit 1
+            elif [ "$STATUS" = "InProgress" ]; then
+              if [ "$RETRY_COUNT" -ge "$RETRY_LIMIT" ]; then
+                echo "Retry limit exceeded"
+                exit 1
+              fi
+              echo "Retry after 1 second (retry count: $RETRY_COUNT)"
+              RETRY_COUNT=$((RETRY_COUNT + 1))
+              sleep 1
+            else
+              echo "Unknown status: $STATUS"
+              exit 1
+            fi
+          done
