@@ -144,15 +144,16 @@ jobs:
             --query "Command.CommandId" \
             --output text)
           
+          RETRY_COUNT=0
           while true; do
             # コマンドのステータスを取得し、失敗や成功、進行中の状態を確認
             STATUS=$(aws ssm list-command-invocations --command-id "$COMMAND_ID" --query "CommandInvocations[0].Status" --output text)
 
             if [ "$STATUS" = "Success" ]; then
-              echo "Success to deploy to wakaba"
+              echo "Success to deploy"
               break
             elif [ "$STATUS" = "Failed" ]; then
-              echo "Failed to deploy to wakaba"
+              echo "Failed to deploy"
               aws ssm list-command-invocations --command-id "$COMMAND_ID" --details
               exit 1
             elif [ "$STATUS" = "InProgress" ]; then
