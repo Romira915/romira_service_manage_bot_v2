@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 
 pub mod sdtd;
+pub mod wol;
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub enum SystemdCommand {

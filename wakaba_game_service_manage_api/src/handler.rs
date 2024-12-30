@@ -1,10 +1,15 @@
 use crate::SystemdControl;
+use anyhow::{Context, Result};
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
 use schema::sdtd::{SdtdRequestJson, SdtdResponseJson};
+use schema::wol::{WolRequestJson, WolResponseJson};
+use std::str::FromStr;
 use std::sync::Arc;
+use wol::MacAddr;
+use crate::config::CONFIG;
 
 pub(super) struct SdtdError(anyhow::Error);
 
@@ -57,3 +62,46 @@ pub(super) async fn sdtd_handler(
 
     Ok(Json(response))
 }
+
+pub(super) struct WolError(anyhow::Error);
+
+impl IntoResponse for WolError {
+    fn into_response(self) -> Response {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(WolResponseJson {
+                result: format!("error: {}", self.0),
+            }),
+        )
+            .into_response()
+    }
+}
+
+impl<E> From<E> for WolError
+where
+    E: Into<anyhow::Error>,
+{
+    fn from(e: E) -> Self {
+        Self(e.into())
+    }
+}
+
+pub(super) async fn wol_handler(
+    Json(data): Json<WolRequestJson>,
+) -> Result<impl IntoResponse, WolError> {
+    let target_mac = match data.target {
+        schema::wol::WolTarget::Amd3900X => &CONFIG.amd3900x_mac_address
+    };
+
+    wol::send_wol(
+        MacAddr::from_str(target_mac).expect("Failed to parse mac address"),
+        None,
+        None,
+    )
+    .context("Failed to send WOL packet")?;
+
+    Ok(Json(WolResponseJson {
+        result: "success".to_string(),
+    }))
+}
+

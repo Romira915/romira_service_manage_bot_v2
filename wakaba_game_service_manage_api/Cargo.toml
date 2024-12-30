@@ -20,3 +20,4 @@ log = "0.4.22"
 anyhow = { workspace = true }
 listenfd = "1.0.1"
 schema = { path = "../schema" }
+wol-rs = "1.1.0"
