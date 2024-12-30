@@ -20,6 +20,7 @@ pub fn poise_framework_options() -> poise::FrameworkOptions<Data, Error> {
             commands::help(),
             commands::register(),
             commands::sdtd::sdtd(),
+            commands::wol::wol(),
         ],
         prefix_options: poise::PrefixFrameworkOptions {
             prefix: Some("~".into()),
