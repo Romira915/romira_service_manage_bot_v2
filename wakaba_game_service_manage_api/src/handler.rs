@@ -1,3 +1,4 @@
+use crate::config::CONFIG;
 use crate::SystemdControl;
 use anyhow::{Context, Result};
 use axum::extract::State;
@@ -9,7 +10,6 @@ use schema::wol::{WolRequestJson, WolResponseJson};
 use std::str::FromStr;
 use std::sync::Arc;
 use wol::MacAddr;
-use crate::config::CONFIG;
 
 pub(super) struct SdtdError(anyhow::Error);
 
@@ -90,7 +90,7 @@ pub(super) async fn wol_handler(
     Json(data): Json<WolRequestJson>,
 ) -> Result<impl IntoResponse, WolError> {
     let target_mac = match data.target {
-        schema::wol::WolTarget::Amd3900X => &CONFIG.amd3900x_mac_address
+        schema::wol::WolTarget::Amd3900X => &CONFIG.amd3900x_mac_address,
     };
 
     wol::send_wol(
@@ -104,4 +104,3 @@ pub(super) async fn wol_handler(
         result: "success".to_string(),
     }))
 }
-
