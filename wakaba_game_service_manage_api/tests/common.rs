@@ -8,7 +8,7 @@ pub trait AppStateTest {
 }
 
 impl AppStateTest for AppState {
-   fn default_for_test() -> Self {
+    fn default_for_test() -> Self {
         Self::new(Arc::new(MockSystemd {
             is_active_return_value: true,
         }))

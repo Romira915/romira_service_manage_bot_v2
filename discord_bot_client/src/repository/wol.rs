@@ -10,7 +10,7 @@ pub(crate) async fn request_wol(target: WolTarget) -> anyhow::Result<()> {
         .json(&request)
         .send()
         .await?;
-    
+
     if response.status().is_success() {
         Ok(())
     } else {
