@@ -17,7 +17,11 @@ pub async fn wol(
         "amd3900x" => {
             ctx.say("Sending Wake-on-LAN magic packet to AMD3900X")
                 .await?;
-            request_wol(WolTarget::Amd3900X).await?;
+            if let Err(e) = request_wol(WolTarget::Amd3900X).await {
+                ctx.say(format!("Failed to send Wake-on-LAN magic packet: {}", e))
+                    .await?;
+                return Ok(());
+            }
             ctx.say("Wake-on-LAN magic packet sent to AMD3900X").await?;
         }
         _ => {
