@@ -95,7 +95,7 @@ pub(super) async fn wol_handler(
 
     wol::send_wol(
         MacAddr::from_str(target_mac).expect("Failed to parse mac address"),
-        None,
+        Some(CONFIG.wol_broadcast_address),
         None,
     )
     .context("Failed to send WOL packet")?;

@@ -1,4 +1,5 @@
 use serde::Deserialize;
+use std::net::IpAddr;
 use std::sync::LazyLock;
 
 #[derive(Debug, Deserialize)]
@@ -7,6 +8,7 @@ pub struct Config {
     pub newrelic_license_key: String,
     pub newrelic_service_name: String,
     pub bearer_token: String,
+    pub wol_broadcast_address: IpAddr,
     pub amd3900x_mac_address: String,
 }
 
