@@ -1,6 +1,7 @@
 use crate::{Context, Error};
 
 pub(crate) mod sdtd;
+pub(crate) mod wol;
 
 /// Show this help menu
 #[poise::command(prefix_command, track_edits, slash_command)]

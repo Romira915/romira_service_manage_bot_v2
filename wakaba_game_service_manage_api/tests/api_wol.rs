@@ -3,15 +3,12 @@ mod common;
 //noinspection NonAsciiCharacters
 #[cfg(test)]
 mod tests {
-    use crate::common::{AppStateTest, MockSystemd};
+    use crate::common::AppStateTest;
     use axum::body::Body;
     use axum::http::header::{AUTHORIZATION, CONTENT_TYPE};
     use axum::http::{Method, Request, StatusCode};
     use http_body_util::BodyExt;
-    use schema::sdtd::{SdtdRequestJson, SdtdResponseJson};
     use schema::wol::{WolRequestJson, WolResponseJson, WolTarget};
-    use schema::{SystemdCommand, SystemdStatus};
-    use std::sync::Arc;
     use tower::util::ServiceExt;
     use wakaba_game_service_manage_api::config::CONFIG;
     use wakaba_game_service_manage_api::{app, AppState};

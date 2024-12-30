@@ -8,6 +8,7 @@ pub struct Config {
     pub newrelic_license_key: String,
     pub newrelic_service_name: String,
     pub wakaba_game_api_base_url: String,
+    pub discord_romira_user_id: u64
 }
 
 pub static CONFIG: LazyLock<Config> = LazyLock::new(|| {
